@@ -13,12 +13,13 @@ import java.util.UUID;
 public class TraceableAspect {
 
     @Around("@annotation(Traceable)")
-    public void advice(ProceedingJoinPoint pjp) {
+    public Object advice(ProceedingJoinPoint pjp) throws Throwable {
         try {
             MDC.put("traceId", UUID.randomUUID().toString());
-            pjp.proceed();
+            return pjp.proceed();
         } catch (Throwable throwable) {
             throwable.printStackTrace();
+            throw throwable;
         } finally {
             MDC.remove("traceId");
         }
